@@ -1,0 +1,7 @@
+{
+  "name": "Precision Plumbing & Heating - Kelowna",
+  "description": "A high-end, professional website for Precision Plumbing and Heating in Kelowna, BC, specializing in plumbing and heating services.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
