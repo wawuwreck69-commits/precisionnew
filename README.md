@@ -16,5 +16,6 @@ View your app in AI Studio: https://ai.studio/apps/61b4ef42-fcf0-446c-bfe6-bb01c
 1. Install dependencies:
    `npm install`
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
+3. In Vercel, set the `FORMSUBMIT_EMAIL` environment variable to the inbox that should receive contact form submissions.
+4. Run the app:
    `npm run dev`

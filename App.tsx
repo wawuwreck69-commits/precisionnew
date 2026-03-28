@@ -227,28 +227,26 @@ const App: React.FC = () => {
     setFormError(null);
 
     try {
-      // Use Web3Forms for simple, reliable form submission
-      const formDataObj = new FormData();
-      formDataObj.append('access_key', '73480fab-6a89-4f2a-956f-28576730fade');
-      formDataObj.append('name', formData.name);
-      formDataObj.append('phone', formData.phone);
-      formDataObj.append('service', formData.service);
-      formDataObj.append('message', formData.message);
-      formDataObj.append('subject', 'New Service Request from Website');
-      formDataObj.append('from_name', 'Precision Plumbing Contact Form');
-
-      const response = await fetch('https://api.web3forms.com/submit', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
-        body: formDataObj
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          service: formData.service,
+          message: formData.message,
+        }),
       });
 
       const result = await response.json();
 
-      if (result.success) {
+      if (response.ok && result.success) {
         setFormState('success');
         setFormData({ name: '', phone: '', service: 'Plumbing Repair', message: '' });
       } else {
-        throw new Error(result.message || 'Web3Forms submission failed');
+        throw new Error(result.error || 'Form submission failed');
       }
     } catch (error) {
       console.error("Form submission error:", error);
