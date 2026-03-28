@@ -211,7 +211,6 @@ const DetailModal: React.FC<ModalProps> = ({ isOpen, onClose, title, category, d
 
 const App: React.FC = () => {
   const [formState, setFormState] = useState<'idle' | 'submitting' | 'success'>('idle');
-  const [formError, setFormError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<'home' | 'privacy' | 'terms'>('home');
   const [modalContent, setModalContent] = useState<Omit<ModalProps, 'isOpen' | 'onClose'> | null>(null);
   const [formData, setFormData] = useState({
@@ -221,53 +220,13 @@ const App: React.FC = () => {
     message: ''
   });
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormState('submitting');
-    setFormError(null);
-
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          phone: formData.phone,
-          service: formData.service,
-          message: formData.message,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok && result.success) {
-        setFormState('success');
-        setFormData({ name: '', phone: '', service: 'Plumbing Repair', message: '' });
-      } else {
-        throw new Error(result.error || 'Form submission failed');
-      }
-    } catch (error) {
-      console.error("Form submission error:", error);
-      setFormError(String(error ?? 'Unknown error'));
-
-      // Fallback: open email client
-      const subject = encodeURIComponent('New Service Request from Website');
-      const body = encodeURIComponent(`
-Name: ${formData.name}
-Phone: ${formData.phone}
-Service: ${formData.service}
-Message: ${formData.message}
-      `.trim());
-      window.open(`mailto:sanjadsamin2001@gmail.com?subject=${subject}&body=${body}`, '_blank');
-
-      setFormState('idle');
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('submitted') === '1') {
+      setFormState('success');
+      window.history.replaceState({}, '', window.location.pathname + window.location.hash);
     }
-
-    // Reset status back to idle after a pause
-    setTimeout(() => setFormState('idle'), 5000);
-  };
+  }, []);
 
   const galleryImages = [
     { 
@@ -631,7 +590,15 @@ Message: ${formData.message}
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleFormSubmit} className="space-y-8 md:space-y-12">
+              <form
+                action="https://formsubmit.co/sanjadsamin2001@gmail.com"
+                method="POST"
+                className="space-y-8 md:space-y-12"
+              >
+                <input type="hidden" name="_captcha" value="false" />
+                <input type="hidden" name="_subject" value="New Service Request from Website" />
+                <input type="hidden" name="_template" value="table" />
+                <input type="hidden" name="_next" value="https://precisionnew.vercel.app/?submitted=1#contact" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
                     <div className="space-y-3">
                       <label className="text-[9px] uppercase tracking-[0.3em] font-bold text-linen/40">Name</label>
@@ -682,21 +649,11 @@ Message: ${formData.message}
                       className="w-full bg-transparent border-b border-white/10 py-4 outline-none focus:border-champagne transition-colors resize-none"
                     ></textarea>
                 </div>
-
-                {formError ? (
-                  <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 p-4 text-rose-200">
-                    <p className="text-sm font-semibold">Submission issue detected</p>
-                    <p className="text-xs">{formError}</p>
-                    <p className="text-xs mt-2">Your email client has opened with the form data. Please send the email to complete submission.</p>
-                  </div>
-                ) : null}
-
                 <button 
                   type="submit"
-                  disabled={formState === 'submitting'}
-                  className="w-full py-6 bg-white text-onyx text-[11px] uppercase tracking-[0.4em] font-bold hover:bg-champagne transition-all duration-500 shadow-2xl disabled:opacity-50"
+                  className="w-full py-6 bg-white text-onyx text-[11px] uppercase tracking-[0.4em] font-bold hover:bg-champagne transition-all duration-500 shadow-2xl"
                 >
-                  {formState === 'submitting' ? 'Sending...' : 'Send Request'}
+                  Send Request
                 </button>
               </form>
             )}
