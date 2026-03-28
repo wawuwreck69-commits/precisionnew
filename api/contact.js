@@ -33,19 +33,31 @@ export default async function handler(req, res) {
       }).toString(),
     });
 
-    const result = await upstreamResponse.json();
+    const responseText = await upstreamResponse.text();
+    let result;
 
-    if (!upstreamResponse.ok || !(result.success === true || result.success === 'true')) {
+    try {
+      result = responseText ? JSON.parse(responseText) : null;
+    } catch {
+      result = null;
+    }
+
+    if (!upstreamResponse.ok || !(result && (result.success === true || result.success === 'true'))) {
       return res.status(502).json({
         success: false,
         error: 'FormSubmit rejected the submission',
-        details: result,
+        upstreamStatus: upstreamResponse.status,
+        details: result ?? responseText,
       });
     }
 
     return res.status(200).json({ success: true });
   } catch (error) {
     console.error('FormSubmit error:', error);
-    return res.status(500).json({ success: false, error: 'Internal submission error' });
+    return res.status(500).json({
+      success: false,
+      error: 'Internal submission error',
+      details: error instanceof Error ? error.message : String(error),
+    });
   }
 }
