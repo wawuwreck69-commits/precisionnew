@@ -559,7 +559,7 @@ const App: React.FC = () => {
                    </div>
                    <div className="break-all">
                       <p className="text-linen/30 text-[9px] uppercase tracking-widest font-bold mb-1 sm:mb-2">Email Us</p>
-                      <a href="mailto:sanjadsamin2001@gmail.com" className="text-lg sm:text-xl md:text-2xl font-serif hover:text-champagne transition-colors">sanjadsamin2001@gmail.com</a>
+                      <a href="mailto:pphkelowna@gmail.com" className="text-lg sm:text-xl md:text-2xl font-serif hover:text-champagne transition-colors">pphkelowna@gmail.com</a>
                    </div>
                 </div>
                 <div className="flex items-start gap-4 sm:gap-6 md:gap-8 group">
@@ -591,7 +591,7 @@ const App: React.FC = () => {
               </div>
             ) : (
               <form
-                action="https://formsubmit.co/sanjadsamin2001@gmail.com"
+                action="https://formsubmit.co/pphkelowna@gmail.com"
                 method="POST"
                 className="space-y-8 md:space-y-12"
               >
